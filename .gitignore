@@ -1,0 +1,32 @@
+# Rust build files
+**/target/
+**/*.rs.bk
+
+# IDE/editor files
+/.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Cargo package files
+Cargo.lock
+
+# Logs
+*.log
+
+# Byebug/Debug files
+*.dSYM/
+*.stackdump
+
+# Backup files
+*~
+
+# Ignore test output
+/tests/output/
+
+# Ignore coverage reports
+/coverage/
