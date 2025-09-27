@@ -8,7 +8,6 @@ fn main() {
 
   let secret_number = rand::rng().random_range(1..=100);
 
-  // This causes an infinite loop (`while` loop on other programming languages)
   loop {
     println!("Please input your guess:");
 
