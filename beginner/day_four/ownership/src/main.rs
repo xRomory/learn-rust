@@ -55,13 +55,13 @@ fn main() {
     let s = String::from("Hello po");
     
     takes_ownership(s); // s's value moves into function...
-                                    // ... and so is no longer valid here
+                        // ... and so is no longer valid here
 
     let x = 5; // comes into scope
 
     makes_copy(x); // i32 implements the `Copy` trait
-                                // x does NOT move into the function,
-                                // so it's okay to use `x` afterward.
+                    // x does NOT move into the function,
+                    // so it's okay to use `x` afterward.
     
     /*
         Return Values and Scope
