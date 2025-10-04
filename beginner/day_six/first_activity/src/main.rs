@@ -1,4 +1,3 @@
-use core::f64;
 /*
     Personal Expense Tracker (Beginner)
 
