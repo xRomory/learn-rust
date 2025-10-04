@@ -143,7 +143,7 @@ fn transaction_history() {
 
 fn print_expense(expense: &Expenses) {
     println!(
-        "ID: {},\nItem: {}, \nPrice {}, \nCategory: {}, \nTimestamp: {}",
+        "\n === Expense Summary: ===\nID: {}, \nItem: {}, \nPrice {}, \nCategory: {}, \nTimestamp: {}\n",
         expense.id, expense.item_name, expense.price, expense.category, expense.timestamp
     );
 }
