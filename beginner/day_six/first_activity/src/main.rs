@@ -1,3 +1,4 @@
+use core::f64;
 /*
     Personal Expense Tracker (Beginner)
 
@@ -16,17 +17,20 @@
             * For Category, I should limit it to prevent user input error
 */
 use std::io;
+use chrono::{DateTime, Local};
 
 #[derive(Debug)]
 struct Expenses {
+    id: i32,
     item_name: String,
     price: f64,
     category: String,
-    date: String,
+    timestamp: String,
 }
 
 fn main() {
-    // let mut expense: Vec<Expenses> = Vec::new();
+    let mut expense: Vec<Expenses> = Vec::new();
+    let mut next_id: i32 = 1i32;
 
     println!("=== Personal Expense Tracker ===");
 
@@ -41,7 +45,7 @@ fn main() {
         let mut user_input = String::new();
         io::stdin()
             .read_line(&mut user_input)
-            .expect("Failed to Read Line");
+            .expect("Failed to read line.");
 
         let choice = match user_input.trim().parse::<i8>() {
             Ok(num) => num,
@@ -52,21 +56,81 @@ fn main() {
         };
 
         match choice {
-            1 => add_expense(),
+            1 => add_expense(&mut expense, & mut next_id),
             2 => display_expenses(),
             3 => transaction_history(),
             4 => {
-                println!("\nThank you, bye!");
+                println!("\nGood bye, mabuhay!");
                 break;
             },
             _ => println!("\nInvalid number option, try again"),
         }
-        // let 
     }
 }
 
-fn add_expense() {
-    // Implement
+fn add_expense(expenses: &mut Vec<Expenses>, next_id: &mut i32) {
+    let mut repeat: bool = true;
+
+    while repeat {
+        let now: DateTime<Local> = chrono::Local::now();
+        let timestamp_string = now.format("%Y-%m-%d %H:%M:%S").to_string();
+        println!("Enter item category:");
+        let mut item_category: String = String::new();
+        io::stdin()
+            .read_line(&mut item_category)
+            .expect("Failed to read line.");
+
+        println!("Enter item name:");
+        let mut item_name: String = String::new();
+        io::stdin()
+            .read_line(&mut item_name)
+            .expect("Failed to read line.");
+
+        println!("Enter item price:");
+        let mut input_price = String::new();
+        io::stdin()
+            .read_line(&mut input_price)
+            .expect("Failed to read line.");
+
+        let price: f64 = match input_price.trim().parse::<f64>() {
+            Ok(num) => num,
+            Err(_) => {
+                println!("Invalid price input, try again.");
+                return;
+            }
+        };
+
+        let expense: Expenses = Expenses {
+            id: *next_id as i32,
+            item_name: item_name.trim().to_string(),
+            price,
+            category: item_category.trim().to_string(),
+            timestamp: timestamp_string,
+        };
+
+        print_expense(&expense);
+        expenses.push(expense);
+        *next_id += 1;
+        println!("Expenses added!");
+
+        println!("Add another item? (y/n)");
+        'y_or_n: loop {
+            let mut again: String = String::new();
+            io::stdin()
+                .read_line(&mut again)
+                .expect("Failed to read line.");
+
+            let input: String = again.trim().to_lowercase();
+            if input == "y" {
+                break 'y_or_n;
+            } else if input == "n" {
+                break repeat = false;
+            } else {
+                println!("Please choose between 'y' or 'n' only.");
+                continue;
+            }
+        };
+    }
 }
 
 fn display_expenses() {
@@ -75,4 +139,11 @@ fn display_expenses() {
 
 fn transaction_history() {
     // Logic here
+}
+
+fn print_expense(expense: &Expenses) {
+    println!(
+        "ID: {},\nItem: {}, \nPrice {}, \nCategory: {}, \nTimestamp: {}",
+        expense.id, expense.item_name, expense.price, expense.category, expense.timestamp
+    );
 }
