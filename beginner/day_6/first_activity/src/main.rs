@@ -18,7 +18,7 @@
 use std::io;
 use chrono::{DateTime, Local};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct Expenses {
     id: i32,
     item_name: String,
@@ -56,8 +56,8 @@ fn main() {
 
         match choice {
             1 => add_expense(&mut expense, & mut next_id),
-            2 => display_expenses(),
-            3 => transaction_history(),
+            2 => display_expenses(&expense),
+            3 => transaction_history(&expense),
             4 => {
                 println!("\nGood bye, mabuhay!");
                 break;
@@ -73,6 +73,7 @@ fn add_expense(expenses: &mut Vec<Expenses>, next_id: &mut i32) {
     while repeat {
         let now: DateTime<Local> = chrono::Local::now();
         let timestamp_string = now.format("%Y-%m-%d %H:%M:%S").to_string();
+        println!();
         println!("Enter item category:");
         let mut item_category: String = String::new();
         io::stdin()
@@ -107,6 +108,7 @@ fn add_expense(expenses: &mut Vec<Expenses>, next_id: &mut i32) {
             timestamp: timestamp_string,
         };
 
+        println!("\n=== Expense Summary ===");
         print_expense(&expense);
         expenses.push(expense);
         *next_id += 1;
@@ -132,17 +134,104 @@ fn add_expense(expenses: &mut Vec<Expenses>, next_id: &mut i32) {
     }
 }
 
-fn display_expenses() {
-    // Logic for displaying
+fn display_expenses(expenses: &Vec<Expenses>) {
+    if expenses.is_empty() {
+        println!("\nNo expenses recorded yet.");
+        return;
+    }
+
+    println!("\n=== All Expenses ===");
+    for expense in expenses {
+        print_expense(expense);
+    }
+    show_total_expenses(expenses);
 }
 
-fn transaction_history() {
-    // Logic here
+fn transaction_history(expenses: &Vec<Expenses>) {
+    if expenses.is_empty() {
+        println!("\nNo transaction recorded yet");
+        return;
+    }
+
+    println!("\nTransaction History Options:");
+    println!("1. Show All Expenses");
+    println!("2. Sort by date (latest first)");
+    println!("3. Sort by date (oldest first)");
+    println!("4. Filter by category");
+    println!("Choose between (1-4): ");
+
+    let mut user_input: String = String::new();
+    io::stdin()
+        .read_line(&mut user_input)
+        .expect("Failed to read line.");
+    let option = user_input.trim();
+
+    match option {
+        "1" => {
+            println!("\n=== All Expenses ===");
+            for expense in expenses {
+                print_expense(expense);
+            }
+            show_total_expenses(expenses);
+        }
+
+        "2" => {
+            let mut date_sorted = expenses.clone();
+            date_sorted.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
+            println!("\n=== Expenses (Latest First) ===");
+            for expense in &date_sorted {
+                print_expense(expense);
+            }
+            show_total_expenses(expenses);
+        }
+
+        "3" => {
+            let mut date_sorted = expenses.clone();
+            date_sorted.sort_by(|a, b| a.timestamp.cmp(&b.timestamp));
+            println!("\n=== Expenses (Oldest First) ===");
+            for expense in &date_sorted {
+                print_expense(expense);
+            }
+            show_total_expenses(expenses);
+        }
+
+        "4" => {
+            println!("\nEnter category to filter (ex. Food):");
+            let mut category_sort: String = String::new();
+            io::stdin()
+                .read_line(&mut category_sort)
+                .expect("Failed to read line.");
+
+            let category_sort = category_sort.trim();
+            let filtered: Vec<&Expenses> = expenses
+                                           .iter()
+                                           .filter(|e| e.category.trim().eq_ignore_ascii_case(category_sort))
+                                           .collect();
+            
+            if filtered.is_empty() {
+                println!("No transaction found for category '{}'", category_sort);
+            } else {
+                println!("\n=== Expenses in '{}' ===", category_sort);
+                for expense in &filtered {
+                    print_expense(expense);
+                }
+
+                let total: f64 = filtered.iter().map(|e| e.price).sum();
+                println!("\nTotal expense for '{}': ₱{:.2}", category_sort, total);
+            }
+        }
+        _ => println!("Invalid option."),
+    }
 }
 
 fn print_expense(expense: &Expenses) {
     println!(
-        "\n === Expense Summary: ===\nID: {}, \nItem: {}, \nPrice {}, \nCategory: {}, \nTimestamp: {}\n",
+        "ID: {}, \nItem: {}, \nPrice {}, \nCategory: {}, \nTimestamp: {}\n",
         expense.id, expense.item_name, expense.price, expense.category, expense.timestamp
     );
+}
+
+fn show_total_expenses(expenses: &Vec<Expenses>) {
+    let total: f64 = expenses.iter().map(|e| e.price).sum();
+    println!("\nTotal expense: ₱{:.2}", total);
 }
