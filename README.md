@@ -5,7 +5,7 @@ This repo is a place where I document my progress, share code snippets, and expe
 
 ---
 
-## 🌟 Why Rust?
+## Why Rust?
 I don’t have a deep reason for learning Rust — I just find it **fascinating**.  
 When I found out that Rust can build **significantly fast applications** while still ensuring **memory safety**, I knew I wanted to give it a shot.  
 
@@ -19,7 +19,7 @@ I also like being unique — not everyone is willing to take on a language that 
 
 ---
 
-## 📚 What’s Inside
+## What’s Inside
 This repository serves as:
 - My **practice ground** for learning Rust.  
 - **Notes, exercises, and small projects** that I work on while studying.  
@@ -27,7 +27,7 @@ This repository serves as:
 
 ---
 
-## 🔧 Topics I’ll Be Exploring
+## Topics I’ll Be Exploring
 Some areas I’m looking forward to covering:  
 - Rust basics: variables, ownership, borrowing, and lifetimes  
 - Pattern matching with enums  
@@ -39,7 +39,7 @@ Some areas I’m looking forward to covering:
 
 ---
 
-## 🎯 My Goals
+## My Goals
 - Develop a **solid foundation** in Rust.  
 - Build **fast and efficient applications**.  
 - Sharpen my **systems programming mindset**.  
@@ -48,12 +48,12 @@ Some areas I’m looking forward to covering:
 
 ---
 
-## 🤝 Contributions
+## Contributions
 This repo is mainly for **personal learning**, but I’m always open to suggestions, feedback, or helpful Rust resources. If you’d like to share tips or advice, feel free to open an issue or discussion.  
 
 ---
 
-## 📜 License
+## License
 This project is open-source under the [MIT License](LICENSE).  
 
 ---
