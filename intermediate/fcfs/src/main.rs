@@ -15,6 +15,131 @@
  * * Learn more and dig deeper to Rust
  */
 
+// Define a `struct` to represent a process
+#[derive(Debug, Clone)]
+struct Process {
+    pid: usize,
+    arrival_time: i32,
+    burst_time: i32,
+    start_time: i32,
+    completion_time: i32,
+    turnaround_time: i32,
+    waiting_time: i32,
+}
+
+impl Process {
+    fn new(pid: usize, arrival_time: i32, burst_time: i32) -> Self {
+        Process {
+            pid,
+            arrival_time,
+            burst_time,
+            start_time: 0,
+            completion_time: 0,
+            turnaround_time: 0,
+            waiting_time: 0,
+        }
+    }
+}
+
+trait Scheduler {
+    fn schedule(&mut self);
+    fn display(&self);
+}
+
+struct FCFSScheduler {
+    processes: Vec<Process>,
+    avg_tat: f32,
+    avg_wt: f32,
+}
+
+impl FCFSScheduler {
+    fn new(processes: Vec<Process>) -> Self {
+        Self {
+            processes,
+            avg_tat: 0.0,
+            avg_wt: 0.0,
+        }
+    }
+}
+
+impl Scheduler for FCFSScheduler {
+    fn schedule(&mut self) {
+        // Sort by arrival time
+        self.processes.sort_by_key(|p| p.arrival_time);
+        let mut current_time = 0;
+        let mut total_tat = 0;
+        let mut total_wt = 0;
+
+        for p in &mut self.processes {
+            let at = p.arrival_time;
+            let bt = p.burst_time;
+
+            p.start_time = if current_time < at { at } else { current_time };
+            p.completion_time = p.start_time + bt;
+            p.turnaround_time = p.completion_time - at;
+            p.waiting_time = p.turnaround_time - bt;
+
+            current_time = p.completion_time;
+
+            total_tat += p.turnaround_time;
+            total_wt += p.waiting_time;
+        }
+
+        self.avg_tat = total_tat as f32 / self.processes.len() as f32;
+        self.avg_wt = total_wt as f32 / self.processes.len() as f32;
+    }
+
+    fn display(&self) {
+        println!("|---------|----|----|----|----|-----|----|");
+        println!(
+            "|{:^9}|{:^4}|{:^4}|{:^4}|{:^4}|{:^5}|{:^4}|",
+            "Process", "AT", "BT", "ST", "CT", "TAT", "WT"
+        );
+        println!("|---------|----|----|----|----|-----|----|");
+
+        for p in &self.processes {
+            println!(
+                "|{:^9}|{:^4}|{:^4}|{:^4}|{:^4}|{:^5}|{:^4}|",
+                p.pid,
+                p.arrival_time,
+                p.burst_time,
+                p.start_time,
+                p.completion_time,
+                p.turnaround_time,
+                p.waiting_time,
+            );
+        }
+
+        println!("|---------|----|----|----|----|-----|----|");
+
+        println!("\nAverage TAT: {:.2}", self.avg_tat);
+        println!("Average WT: {:.2}", self.avg_wt);
+
+        // Gantt Chart
+        print!("\nGantt Chart:\n|");
+        for p in &self.processes {
+            print!(" P{} |", p.pid);
+        }
+        println!();
+
+        print!("0");
+        for p in &self.processes {
+            print!("    {}", p.completion_time);
+        }
+        println!();
+    }
+}
+
 fn main() {
-    println!("Hello, world!");
+    // For example (Given in PDF file)
+    let processes = vec![
+        Process::new(1, 0, 4),
+        Process::new(2, 1, 3),
+        Process::new(3, 2, 1),
+        Process::new(4, 3, 2),
+        Process::new(5, 5, 4),
+    ];
+    let mut scheduler = FCFSScheduler::new(processes);
+    scheduler.schedule();
+    scheduler.display();
 }
