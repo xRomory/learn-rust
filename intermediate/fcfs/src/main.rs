@@ -15,6 +15,8 @@
  * * Learn more and dig deeper to Rust
  */
 
+use std::io::{self, Write};
+
 // Define a `struct` to represent a process
 #[derive(Debug, Clone)]
 struct Process {
@@ -130,16 +132,101 @@ impl Scheduler for FCFSScheduler {
     }
 }
 
-fn main() {
+fn valid_at_bt(input: &str) -> Result<i32, &'static str> {
+    match input.trim().parse::<i32>() {
+        Ok(num) if num >= 0 => Ok(num),
+        Ok(_) => Err("Please enter a non-negative number"),
+        Err(_) => Err("Invalid input. Please enter a valid number."),
+    }
+}
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     // For example (Given in PDF file)
-    let processes = vec![
-        Process::new(1, 0, 4),
-        Process::new(2, 1, 3),
-        Process::new(3, 2, 1),
-        Process::new(4, 3, 2),
-        Process::new(5, 5, 4),
-    ];
-    let mut scheduler = FCFSScheduler::new(processes);
-    scheduler.schedule();
-    scheduler.display();
+    // Uncomment to test with predefined processes
+    // let processes = vec![
+    //     Process::new(1, 0, 4),
+    //     Process::new(2, 1, 3),
+    //     Process::new(3, 2, 1),
+    //     Process::new(4, 3, 2),
+    //     Process::new(5, 5, 4),
+    // ];
+    // let mut scheduler = FCFSScheduler::new(processes);
+    // scheduler.schedule();
+    // scheduler.display();
+
+    loop {
+        print!("Enter the number of process: ");
+        io::stdout().flush()?;
+        let mut num_proc_input = String::new();
+        io::stdin().read_line(&mut num_proc_input)?;
+        match num_proc_input.trim().parse::<usize>() {
+            Ok(num) if num > 0 => {
+                let mut processes = Vec::new();
+                let mut i = 0;
+                while i < num {
+                    println!("Process: {}", i + 1);
+                    print!("Enter Arrival Time: ");
+                    io::stdout().flush()?;
+                    let mut at_input = String::new();
+                    io::stdin().read_line(&mut at_input)?;
+
+                    let arrival_time = match valid_at_bt(&at_input) {
+                        Ok(at) => at,
+                        Err(e) => {
+                            println!("{}", e);
+                            continue;
+                        }
+                    };
+
+                    print!("Enter Burst Time: ");
+                    io::stdout().flush()?;
+                    let mut bt_input = String::new();
+                    io::stdin().read_line(&mut bt_input)?;
+                    let burst_time = match valid_at_bt(&bt_input) {
+                        Ok(bt) => bt,
+                        Err(e) => {
+                            println!("{}", e);
+                            continue;
+                        }
+                    };
+                    println!();
+
+                    processes.push(Process::new(i + 1, arrival_time, burst_time));
+                    i += 1;
+                }
+
+                let mut scheduler = FCFSScheduler::new(processes);
+                scheduler.schedule();
+                scheduler.display();
+
+                print!("\nDo you want to try again (yes or no)?: ");
+                io::stdout().flush()?;
+                loop {
+                    let mut repeat_input = String::new();
+                    io::stdin().read_line(&mut repeat_input)?;
+                    match repeat_input.trim().to_lowercase().as_str() {
+                        "yes" => break,
+                        "no" => {
+                            println!("FCFC Algorithm Simulation done. Bye!");
+                            return Ok(());
+                        }
+                        _ => {
+                            print!("Please choose between 'yes' or 'no' only: ");
+                            io::stdout().flush()?;
+                            continue;
+                        }
+                    }
+                }
+                // break;
+            }
+            Ok(_) => {
+                println!("Please enter a number greater than 0");
+                continue;
+            }
+            Err(_) => {
+                println!("Invalid input! Please enter a valid integer.");
+                continue;
+            }
+        }
+    }
 }
