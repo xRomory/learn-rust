@@ -31,6 +31,29 @@
  *
  */
 
-fn main() {
-    println!("Hello, world!");
+mod models;
+mod scheduler;
+mod utils;
+
+use crate::{
+    models::process::Process,
+    utils::input::{user_input, valid_input},
+    utils::try_again::try_again,
+};
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    loop {
+        println!("Round Robin Scheduling Algorithm");
+        let num_input = user_input("Enter number of processes (3-5): ")?;
+
+        let num_of_processes: usize = match num_input.trim().parse() {
+            Ok(num) if (3..=5).contains(&num) => num,
+            _ => {
+                println!("Please enter between 3 and 5.");
+                continue;
+            }
+        };
+
+        try_again()?;
+    }
 }
