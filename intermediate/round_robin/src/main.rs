@@ -36,9 +36,7 @@ mod scheduler;
 mod utils;
 
 use crate::{
-    models::process::Process,
-    utils::input::{user_input, valid_input},
-    utils::try_again::try_again,
+    models::rr_process::Process, scheduler::round_robin::{RoundRobinScheduler, Scheduler}, utils::{input::{user_input, valid_input}, try_again::try_again}
 };
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -54,6 +52,50 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         };
 
-        try_again()?;
+        let mut processes = Vec::new();
+        for i in 0..num_of_processes {
+            println!("Process {}", i + 1);
+
+            let arrival_time: u32 = loop {
+                let input = user_input("Enter Arrival Time: ")?;
+                match valid_input(&input) {
+                    Ok(v) => break v as u32,
+                    Err(e) => println!("{}", e)
+                }
+            };
+
+            let burst_time: u32 = loop {
+                let input = user_input("Enter Burst Time: ")?;
+                match valid_input(&input) {
+                    Ok(v) => break v as u32,
+                    Err(e) => println!("{}", e)
+                }
+            };
+
+            processes.push(Process::new(i + 1, arrival_time, burst_time));
+        }
+
+        let time_quantum: u32 = loop {
+            let input = user_input("\nEnter Quantum Time: ")?;
+            match valid_input(&input) {
+                Ok(v) => break v as u32,
+                Err(e) => println!("{}", e)
+            }
+        };
+
+        let mut scheduler = RoundRobinScheduler::new(time_quantum);
+        for p in processes {
+            scheduler.add_process(p);
+        }
+        scheduler.schedule();
+        scheduler.display();
+
+        let again = try_again()?;
+
+        if !again {
+            break;
+        }
     }
+
+    Ok(())
 }
