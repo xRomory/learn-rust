@@ -10,12 +10,12 @@ pub struct Process {
 }
 
 impl Process {
-    pub fn new(pid: usize, arrival_time: u32, burst_time: u32) -> Self {
+    pub fn new(pid: usize, arrival_time: u32, burst_time: u32, priority: u32) -> Self {
         Process {
             pid,
             arrival_time,
             burst_time,
-            priority: 0,
+            priority,
             completion_time: 0,
             turnaround_time: 0,
             waiting_time: 0,

@@ -99,20 +99,22 @@ impl Scheduler for PriorityScheduler {
             match idx {
                 Some(i) => {
                     let process = &mut self.processes[i];
-                    process.arrival_time = current_time;
-                    current_time += process.burst_time;
-                    process.completion_time = current_time;
+                    let start_time = current_time;
+                    let end_time = start_time + process.burst_time;
+
+                    process.completion_time = end_time;
                     process.turnaround_time = process.completion_time - process.arrival_time;
                     process.waiting_time = process.turnaround_time - process.burst_time;
 
                     gantt_chart.push(GanttSegment {
                         pid: process.pid,
-                        start_time: process.arrival_time,
-                        end_time: process.completion_time
+                        start_time,
+                        end_time
                     });
 
                     is_completed[i] = true;
                     completed_process += 1;
+                    current_time = end_time;
                 }
                 None => {
                     current_time += 1;
@@ -131,26 +133,27 @@ impl Scheduler for PriorityScheduler {
     }
 
     fn display(&self) {
-        println!("|---------|----|----|----|----|-----|");
+        println!("|---------|----|----|----------|----|-----|-----|");
         println!(
-            "|{:^9}|{:^4}|{:^4}|{:^4}|{:^4}|{:^5}|",
-            "Process", "AT", "BT", "CT", "TAT", "WT"
+            "|{:^9}|{:^4}|{:^4}|{:^10}|{:^4}|{:^5}|{:^5}|",
+            "Process", "AT", "BT", "Priority", "CT", "TAT", "WT"
         );
-        println!("|---------|----|----|----|----|-----|");
+        println!("|---------|----|----|----------|----|-----|-----|");
 
         for p in &self.processes {
             println!(
-                "|{:^9}|{:^4}|{:^4}|{:^4}|{:^4}|{:^5}|",
+                "|{:^9}|{:^4}|{:^4}|{:^10}|{:^4}|{:^5}|{:^5}|",
                 p.pid,
                 p.arrival_time,
                 p.burst_time,
+                p.priority,
                 p.completion_time,
                 p.turnaround_time,
                 p.waiting_time,
             );
         }
 
-        println!("|---------|----|----|----|----|-----|");
+        println!("|---------|----|----|----------|----|-----|-----|");
         println!("Average Turnaround Time: {:.2}", self.avg_tat);
         println!("Average Waiting Time: {:.2}", self.avg_wt);
 
