@@ -35,6 +35,13 @@ mod models;
 mod scheduler;
 mod utils;
 
+use crate::{
+    models::priority_process::Process,
+    scheduler::priority_scheduler::{Scheduler, PriorityScheduler},
+    utils::input::{user_input, valid_input},
+    utils::try_again::try_again
+};
+
 fn main() {
     println!("Hello, world!");
 }
