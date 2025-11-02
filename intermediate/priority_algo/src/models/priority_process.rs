@@ -3,7 +3,7 @@ pub struct Process {
     pub pid: usize,
     pub arrival_time: u32,
     pub burst_time: u32,
-    pub priority: u8,
+    pub priority: u32,
     pub completion_time: u32,
     pub turnaround_time: u32,
     pub waiting_time: u32,
