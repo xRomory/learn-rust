@@ -48,13 +48,8 @@ Some areas I’m looking forward to covering:
 
 ---
 
-## Contributions
+## Disclaimer
 This repo is mainly for **personal learning**, but I’m always open to suggestions, feedback, or helpful Rust resources. If you’d like to share tips or advice, feel free to open an issue or discussion.  
-
----
-
-## License
-This project is open-source under the [MIT License](LICENSE).  
 
 ---
 
