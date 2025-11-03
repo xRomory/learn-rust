@@ -32,6 +32,58 @@ mod models;
 mod scheduler;
 mod utils;
 
-fn main() {
-    println!("Hello, world!");
+use crate::{
+    models::hrrn_process::Process,
+    scheduler::hrrn::{HRRNScheduler, Scheduler},
+    utils::input::{user_input, valid_input},
+    utils::try_again::try_again,
+};
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    loop {
+        println!("HRRN Scheduling Algorithm\n");
+
+        let num_input = user_input("Enter the number of processes (3-5): ")?;
+        let num_of_processes: usize = match num_input.trim().parse() {
+            Ok(num) if (3..=5).contains(&num) => num,
+            _ => {
+                println!("Please enter between 3 and 5 only");
+                continue;
+            }
+        };
+
+        let mut processes = Vec::new();
+        for i in 0..num_of_processes {
+            println!("\nProcess {}", i + 1);
+
+            let arrival_time = loop {
+                let input = user_input("Enter Arrival Time: ")?;
+                match valid_input(&input) {
+                    Ok(value) => break value,
+                    Err(e) => println!("{}", e),
+                }
+            };
+
+            let burst_time = loop {
+                let input = user_input("Enter Burst Time: ")?;
+                match valid_input(&input) {
+                    Ok(value) => break value,
+                    Err(e) => println!("{}", e),
+                }
+            };
+
+            processes.push(Process::new(i + 1, arrival_time, burst_time));
+        }
+
+        let mut scheduler = HRRNScheduler::new(processes);
+        scheduler.scheduler();
+        scheduler.display();
+
+        let again = try_again()?;
+        if !again {
+            break;
+        }
+    }
+
+    Ok(())
 }

@@ -10,7 +10,10 @@ pub fn try_again() -> Result<bool, std::io::Error> {
 
         match input.trim().to_lowercase().as_str() {
             "yes" | "y" => return Ok(true),
-            "no" | "n" => return Ok(false),
+            "no" | "n" => {
+                println!("HRRN Algorithm Simulation Ended. Goodbye!");
+                return Ok(false);
+            }
             _ => {
                 println!("Invalid input. Please enter 'y' for yes or 'n' for no.");
                 continue;
