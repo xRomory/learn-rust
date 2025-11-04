@@ -3,12 +3,10 @@ mod scheduler;
 mod utils;
 
 use crate:: {
-    models::cpu_process::{BaseProcess, FCFSProcess},
-    scheduler::fcfs::{FCFSScheduler, Scheduler},
+    models::cpu_process::{BaseProcess, FCFSProcess, SJFProcess},
+    scheduler::{fcfs::{FCFSScheduler, Scheduler}, sjf::{SJFPreemptiveScheduler, SJFScheduler}},
     utils::{input::{get_processes_from_user, user_input}, try_again::try_again}
 };
-
-// fn fcfs_simulation() -> Result<> {}
 
 fn main() -> Result<(), Box<dyn std::error::Error>>{
     loop {
@@ -46,7 +44,25 @@ fn main() -> Result<(), Box<dyn std::error::Error>>{
                         break 'fcfc_loop
                     }
                 }
-            }
+            },
+            2 => {
+                'sjf_loop: loop {
+                    println!("\nShortest Job First (Preemptive) Algorithm Simulation\n");
+                    let base_process: Vec<BaseProcess> = get_processes_from_user()?;
+                    let sjf_processes: Vec<SJFProcess> = base_process.into_iter().map(SJFProcess::new).collect();
+
+                    let mut sjf_scheduler = SJFPreemptiveScheduler::new(sjf_processes);
+                    sjf_scheduler.schedule();
+                    sjf_scheduler.display();
+
+                    let again: bool = try_again()?;
+                    if again {
+                        continue 'sjf_loop
+                    } else {
+                        break 'sjf_loop
+                    }
+                }
+            },
             6 => {
                 println!("CPU Scheduling Algorithm Exiting... Bye!");
                 break
