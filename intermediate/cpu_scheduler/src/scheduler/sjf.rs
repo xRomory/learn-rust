@@ -1,6 +1,8 @@
+use std::{cmp::Reverse, collections::BinaryHeap};
+
 use crate::{
     models::cpu_process::SJFProcess,
-    utils::gantt_display::{GanttChart, GanttSegment}
+    utils::gantt_display::{GanttChart, GanttSegment},
 };
 
 pub trait SJFScheduler {
@@ -34,51 +36,53 @@ impl SJFScheduler for SJFPreemptiveScheduler {
         let mut time = 0;
         let mut completed_process = 0;
 
+        let mut heap = BinaryHeap::new();
+        let mut next_proc = 0;
+
         while completed_process < num_of_processes {
-            let mut idx: Option<usize> = None;
-            let mut min_rt = u32::MAX;
-
-            for (i, p) in self.processes.iter().enumerate() {
-                if p.base.arrival_time <= time && p.remaining_time > 0 && p.remaining_time < min_rt {
-                    min_rt = p.remaining_time;
-                    idx = Some(i);
-                }
+            while next_proc < num_of_processes
+                && self.processes[next_proc].base.arrival_time <= time
+            {
+                heap.push(Reverse((
+                    self.processes[next_proc].remaining_time,
+                    self.processes[next_proc].base.arrival_time,
+                    next_proc,
+                )));
+                next_proc += 1;
             }
 
-            match idx {
-                Some(i) => {
-                    let process = &mut self.processes[i];
-                    process.remaining_time -= 1;
+            if let Some(Reverse((_, _, idx))) = heap.pop() {
+                let process = &mut self.processes[idx];
 
-                    if process.remaining_time == 0 {
-                        process.completion_time = time + 1;
-                        process.turnaround_time = process.completion_time - process.base.arrival_time;
-                        process.waiting_time = process.turnaround_time - process.base.burst_time;
-                        completed_process += 1;
-                    }
+                // Execute for one unit of time
+                process.remaining_time -= 1;
+                self.gantt_chart.segments.push(GanttSegment {
+                    pid: process.base.pid,
+                    start_time: time,
+                    end_time: time + 1,
+                });
 
-                    self.gantt_chart.segments.push(GanttSegment {
-                        pid: process.base.pid,
-                        start_time: time,
-                        end_time: time + 1,
-                    });
+                time += 1;
 
+                if process.remaining_time == 0 {
+                    process.completion_time = time;
+                    process.turnaround_time = time - process.base.arrival_time;
+                    process.waiting_time = process.turnaround_time - process.base.burst_time;
+                    completed_process += 1;
+                } else {
+                    // Push it back into heap with updated remaining time
+                    heap.push(Reverse((
+                        process.remaining_time,
+                        process.base.arrival_time,
+                        idx,
+                    )));
                 }
-                None => {
-                    if let Some(next_arrival) = self.processes
-                        .iter()
-                        .filter(|p| p.remaining_time > 0)
-                        .map(|p| p.base.arrival_time)
-                        .min()
-                    {
-                        time = next_arrival;
-                    } else {
-                        break;
-                    }
+            } else {
+                // No process is ready; jump to the next arrival
+                if next_proc < num_of_processes {
+                    time = self.processes[next_proc].base.arrival_time;
                 }
             }
-
-            time += 1;
         }
 
         let total_tat: u32 = self.processes.iter().map(|p| p.turnaround_time).sum();
