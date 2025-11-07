@@ -3,9 +3,9 @@ mod scheduler;
 mod utils;
 
 use crate:: {
-    models::cpu_process::{BaseProcess, FCFSProcess, SJFProcess},
-    scheduler::{fcfs::{FCFSScheduler, Scheduler}, sjf::{SJFPreemptiveScheduler, SJFScheduler}},
-    utils::{input::{get_processes_from_user, user_input}, try_again::try_again}
+    models::cpu_process::{BaseProcess, FCFSProcess, RRProcess, SJFProcess},
+    scheduler::{fcfs::{FCFSScheduler, Scheduler}, round_robin::{RRScheduler, RoundRobinAlgorithm}, sjf::{SJFPreemptiveScheduler, SJFScheduler}},
+    utils::{input::{get_processes_from_user, user_input, valid_input}, try_again::try_again}
 };
 
 fn main() -> Result<(), Box<dyn std::error::Error>>{
@@ -63,6 +63,32 @@ fn main() -> Result<(), Box<dyn std::error::Error>>{
                     }
                 }
             },
+            3 => {
+                'rr_loop: loop {
+                    println!("\nRound Robin Algorithm Simulation\n");
+                    let base_process: Vec<BaseProcess> = get_processes_from_user()?;
+                    let time_quantum: u32 = loop {
+                        let input = user_input("\nEnter Quantum Time: ")?;
+                        match valid_input(&input) {
+                            Ok(v) => break v as u32,
+                            Err(e) => println!("{}", e)
+                        }
+                    };
+
+                    let rr_processes: Vec<RRProcess> = base_process.into_iter().map(RRProcess::new).collect();
+
+                    let mut rr_scheduler = RoundRobinAlgorithm::new(time_quantum, rr_processes);
+                    rr_scheduler.schedule();
+                    rr_scheduler.display();
+
+                    let again: bool = try_again()?;
+                    if again {
+                        continue 'rr_loop
+                    } else {
+                        break 'rr_loop
+                    }
+                }
+            }
             6 => {
                 println!("CPU Scheduling Algorithm Exiting... Bye!");
                 break

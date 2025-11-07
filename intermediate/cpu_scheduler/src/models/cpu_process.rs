@@ -10,7 +10,7 @@ impl BaseProcess {
         BaseProcess {
             pid,
             arrival_time,
-            burst_time
+            burst_time,
         }
     }
 }
@@ -42,7 +42,7 @@ pub struct SJFProcess {
     pub remaining_time: u32,
     pub completion_time: u32,
     pub turnaround_time: u32,
-    pub waiting_time: u32
+    pub waiting_time: u32,
 }
 
 impl SJFProcess {
@@ -52,7 +52,28 @@ impl SJFProcess {
             base,
             completion_time: 0,
             turnaround_time: 0,
-            waiting_time: 0 
+            waiting_time: 0,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct RRProcess {
+    pub base: BaseProcess,
+    pub remaining_time: u32,
+    pub completion_time: u32,
+    pub turnaround_time: u32,
+    pub waiting_time: u32,
+}
+
+impl RRProcess {
+    pub fn new(base: BaseProcess) -> Self {
+        RRProcess {
+            remaining_time: base.burst_time,
+            base,
+            completion_time: 0,
+            turnaround_time: 0,
+            waiting_time: 0,
         }
     }
 }
