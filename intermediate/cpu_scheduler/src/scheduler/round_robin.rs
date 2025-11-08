@@ -10,27 +10,78 @@ pub trait RRScheduler {
     fn display(&self);
 }
 
-pub struct RoundRobinAlgorithm {
+pub struct RoundRobinScheduler {
     pub processes: Vec<RRProcess>,
     pub gantt_chart: GanttChart,
     pub time_quantum: u32,
-    pub avg_tat: f32,
-    pub avg_wt: f32,
 }
 
-impl RoundRobinAlgorithm {
+impl RoundRobinScheduler {
     pub fn new(time_quantum: u32, processes: Vec<RRProcess>) -> Self {
-        RoundRobinAlgorithm {
+        RoundRobinScheduler {
             processes,
             gantt_chart: GanttChart::new(),
             time_quantum,
-            avg_tat: 0.0,
-            avg_wt: 0.0,
         }
+    }
+
+    pub fn avg_turnaround_time(&self) -> f32 {
+        self.processes
+            .iter()
+            .map(|t| t.turnaround_time as f32)
+            .sum::<f32>() / self.processes.len() as f32
+    }
+
+    pub fn avg_waiting_time(&self) -> f32 {
+        self.processes
+            .iter()
+            .map(|t| t.waiting_time as f32)
+            .sum::<f32>() / self.processes.len() as f32
+    }
+
+    // Helper function to add all newly arrived processes to the ready queue
+    fn add_arrived_processes(
+        &self,
+        ready_queue: &mut VecDeque<usize>,
+        next_arrival_index: &mut usize,
+        current_time: u32,
+    ) {
+        while *next_arrival_index < self.processes.len()
+            && self.processes[*next_arrival_index].base.arrival_time <= current_time
+        {
+            ready_queue.push_back(*next_arrival_index);
+            *next_arrival_index += 1;
+        }
+    }
+
+    // Helper for Table display
+    fn display_table(processes: &[RRProcess]) {
+        const HEADER: &str = "|---------|----|----|----|----|-----|";
+
+        println!("{}", HEADER);
+        println!(
+            "|{:^9}|{:^4}|{:^4}|{:^4}|{:^4}|{:^5}|",
+            "Process", "AT", "BT", "CT", "TAT", "WT",
+        );
+        println!("{}", HEADER);
+
+        for p in processes {
+            println!(
+                "|{:^9}|{:^4}|{:^4}|{:^4}|{:^4}|{:^5}|",
+                p.base.pid,
+                p.base.arrival_time,
+                p.base.burst_time,
+                p.completion_time,
+                p.turnaround_time,
+                p.waiting_time,
+            );
+        }
+
+        println!("{}", HEADER);
     }
 }
 
-impl RRScheduler for RoundRobinAlgorithm {
+impl RRScheduler for RoundRobinScheduler {
     fn schedule(&mut self) {
         self.processes.sort_by_key(|p| p.base.arrival_time);
 
@@ -40,12 +91,11 @@ impl RRScheduler for RoundRobinAlgorithm {
         let mut completed_process = 0;
         let mut next_arrival_index = 0;
 
-        while next_arrival_index < num_processes
-            && self.processes[next_arrival_index].base.arrival_time <= current_time
-        {
-            ready_queue.push_back(next_arrival_index);
-            next_arrival_index += 1;
-        }
+        self.add_arrived_processes(
+            &mut ready_queue,
+            &mut next_arrival_index, 
+            current_time
+        );
 
         while completed_process < num_processes {
             if ready_queue.is_empty() {
@@ -63,24 +113,23 @@ impl RRScheduler for RoundRobinAlgorithm {
                     self.time_quantum,
                     self.processes[process_index].remaining_time,
                 );
-                let pid = self.processes[process_index].base.pid;
+
                 let start_time = current_time;
 
                 self.processes[process_index].remaining_time -= execution_time;
                 current_time += execution_time;
 
                 self.gantt_chart.segments.push(GanttSegment {
-                    pid,
+                    pid: self.processes[process_index].base.pid,
                     start_time,
                     end_time: current_time,
                 });
 
-                while next_arrival_index < num_processes
-                    && self.processes[next_arrival_index].base.arrival_time <= current_time 
-                {
-                    ready_queue.push_back(next_arrival_index);
-                    next_arrival_index += 1;
-                }
+                self.add_arrived_processes(
+                    &mut ready_queue,
+                    &mut next_arrival_index, 
+                    current_time
+                );
 
                 if self.processes[process_index].remaining_time == 0 {
                     let process = &mut self.processes[process_index];
@@ -93,37 +142,12 @@ impl RRScheduler for RoundRobinAlgorithm {
                 }
             }
         }
-
-        let total_tat: u32 = self.processes.iter().map(|t| t.turnaround_time).sum();
-        let total_wt: u32 = self.processes.iter().map(|t| t.waiting_time).sum();
-
-        self.avg_tat = total_tat as f32 / num_processes as f32;
-        self.avg_wt = total_wt as f32 / num_processes as f32;
     }
 
     fn display(&self) {
-        println!("|---------|----|----|----|----|-----|");
-        println!(
-            "|{:^9}|{:^4}|{:^4}|{:^4}|{:^4}|{:^5}|",
-            "Process", "AT", "BT", "CT", "TAT", "WT",
-        );
-        println!("|---------|----|----|----|----|-----|");
-
-        for p in &self.processes {
-            println!(
-                "|{:^9}|{:^4}|{:^4}|{:^4}|{:^4}|{:^5}|",
-                p.base.pid,
-                p.base.arrival_time,
-                p.base.burst_time,
-                p.completion_time,
-                p.turnaround_time,
-                p.waiting_time,
-            );
-        }
-
-        println!("|---------|----|----|----|----|-----|");
-        println!("\nAverage Turnaround Time: {:.2}", self.avg_tat);
-        println!("\nAverage Waiting Time: {:.2}", self.avg_wt);
+        Self::display_table(&self.processes);
+        println!("\nAverage Turnaround Time: {:.2}", self.avg_turnaround_time());
+        println!("\nAverage Waiting Time: {:.2}", self.avg_waiting_time());
 
         self.gantt_chart.display_gantt_chart();
     }

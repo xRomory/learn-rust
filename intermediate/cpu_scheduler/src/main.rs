@@ -4,7 +4,7 @@ mod utils;
 
 use crate:: {
     models::cpu_process::{BaseProcess, FCFSProcess, RRProcess, SJFProcess},
-    scheduler::{fcfs::{FCFSScheduler, Scheduler}, round_robin::{RRScheduler, RoundRobinAlgorithm}, sjf::{SJFPreemptiveScheduler, SJFScheduler}},
+    scheduler::{fcfs::{FCFSScheduler, Scheduler}, round_robin::{RRScheduler, RoundRobinScheduler}, sjf::{SJFPreemptiveScheduler, SJFScheduler}},
     utils::{input::{get_processes_from_user, user_input, valid_input}, try_again::try_again}
 };
 
@@ -77,7 +77,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>>{
 
                     let rr_processes: Vec<RRProcess> = base_process.into_iter().map(RRProcess::new).collect();
 
-                    let mut rr_scheduler = RoundRobinAlgorithm::new(time_quantum, rr_processes);
+                    let mut rr_scheduler = RoundRobinScheduler::new(time_quantum, rr_processes);
                     rr_scheduler.schedule();
                     rr_scheduler.display();
 
