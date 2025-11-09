@@ -37,7 +37,12 @@ impl PriorityScheduler {
             .sum::<f32>() / self.processes.len() as f32
     }
 
-    // Helper function to add all newly arrived processes to the ready queue
+    /* 
+        Helper function to add all newly arrived processes to the ready queue
+
+        * Used Revsrse since BinaryHeap uses max heap by default.
+        * In Priority Scheduling, the smaller the value of priority, that's the being prioritize. Hence, min heap
+    */
     fn add_arrived_processes_to_heap(
         &self,
         heap: &mut BinaryHeap<Reverse<(u32, u32, usize, usize)>>,
@@ -62,7 +67,7 @@ impl PriorityScheduler {
     fn display_table(processes: &[PriorityProcess]) {
         const HEADER: &str = "|---------|----|----|----------|----|-----|-----|";
 
-        println!("{}", HEADER);
+        println!("\n{}", HEADER);
         println!(
             "|{:^9}|{:^4}|{:^4}|{:^10}|{:^4}|{:^5}|{:^5}|",
             "Process", "AT", "BT", "Priority", "CT", "TAT", "WT"
@@ -82,7 +87,7 @@ impl PriorityScheduler {
             );
         }
 
-        println!("{}", HEADER);
+        println!("\n{}", HEADER);
     }
 }
 
@@ -134,13 +139,18 @@ impl PrioritySched for PriorityScheduler {
                     current_time
                 );
             } else {
-                if next_arrival < num_process { current_time = self.processes[next_arrival].base.arrival_time; }
+                if heap.is_empty() && next_arrival < num_process { 
+                    current_time = self.processes[next_arrival].base.arrival_time; 
+                }
             }
         }
     }
 
     fn display(&self) {
-        Self::display_table(&self.processes);
+        let mut process = self.processes.clone();
+        process.sort_by_key(|p| p.base.pid);
+        Self::display_table(&process);
+
         println!("Average Turnaround Time: {:.2}", self.avg_turnaround_time());
         println!("Average Waiting Time: {:.2}", self.avg_waiting_time());
 
