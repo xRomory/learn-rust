@@ -4,8 +4,11 @@ mod utils;
 
 use crate:: {
     models::cpu_process::{BaseProcess, FCFSProcess, RRProcess, SJFProcess},
-    scheduler::{fcfs::{FCFSScheduler, Scheduler}, round_robin::{RRScheduler, RoundRobinScheduler}, sjf::{SJFPreemptiveScheduler, SJFScheduler}},
-    utils::{input::{get_processes_from_user, user_input, valid_input}, try_again::try_again}
+    scheduler::{fcfs::{FCFSScheduler, Scheduler}, priority::{PrioritySched, PriorityScheduler}, round_robin::{RRScheduler, RoundRobinScheduler}, sjf::{SJFPreemptiveScheduler, SJFScheduler}},
+    utils::{
+        input::{get_priority_processes_from_user, get_processes_from_user, user_input, valid_input},
+        try_again::try_again
+    }
 };
 
 fn main() -> Result<(), Box<dyn std::error::Error>>{
@@ -86,6 +89,23 @@ fn main() -> Result<(), Box<dyn std::error::Error>>{
                         continue 'rr_loop
                     } else {
                         break 'rr_loop
+                    }
+                }
+            },
+            4 => {
+                'priority_loop: loop {
+                    println!("\nNon-Preemptive Priority CPU Scheduling Algorithm Simulation\n");
+                    let priority_process = get_priority_processes_from_user()?;
+                    
+                    let mut priority_scheduler  = PriorityScheduler::new(priority_process);
+                    priority_scheduler.schedule();
+                    priority_scheduler.display();
+
+                    let again: bool = try_again()?;
+                    if again {
+                        continue 'priority_loop
+                    } else {
+                        break 'priority_loop
                     }
                 }
             }

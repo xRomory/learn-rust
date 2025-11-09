@@ -1,3 +1,4 @@
+
 #[derive(Debug, Clone)]
 pub struct BaseProcess {
     pub pid: usize,
@@ -88,10 +89,10 @@ pub struct PriorityProcess {
 }
 
 impl PriorityProcess {
-    pub fn new(base: BaseProcess) -> Self {
+    pub fn new(base: BaseProcess, priority: u32) -> Self {
         PriorityProcess { 
             base,
-            priority: 0,
+            priority,
             completion_time: 0,
             turnaround_time: 0,
             waiting_time: 0 
