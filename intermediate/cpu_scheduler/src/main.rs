@@ -4,7 +4,13 @@ mod utils;
 
 use crate:: {
     models::cpu_process::{BaseProcess, FCFSProcess, HRRNProcess, RRProcess, SJFProcess},
-    scheduler::{fcfs::{FCFSScheduler, Scheduler}, hrrn::{HRRNSched, HRRNScheduler}, priority::{PrioritySched, PriorityScheduler}, round_robin::{RRScheduler, RoundRobinScheduler}, sjf::{SJFPreemptiveScheduler, SJFScheduler}},
+    scheduler::{
+        fcfs::{FCFSScheduler, Scheduler},
+        hrrn::{HRRNSched, HRRNScheduler},
+        priority::{PrioritySched, PriorityScheduler}, 
+        round_robin::{RRScheduler, RoundRobinScheduler},
+        sjf::{SJFPreemptiveScheduler, SJFScheduler}
+    },
     utils::{
         input::{get_priority_processes_from_user, get_processes_from_user, user_input, valid_input},
         try_again::try_again
@@ -109,7 +115,24 @@ fn main() -> Result<(), Box<dyn std::error::Error>>{
                     }
                 }
             },
-            
+            5 => {
+                'hrrn_loop: loop {
+                    println!("\nHighest Response Ratio Next Algorithm Simulation\n");
+                    let base_process: Vec<BaseProcess> = get_processes_from_user()?;
+                    let hrrn_process:Vec<HRRNProcess> = base_process.into_iter().map(HRRNProcess::new).collect();
+
+                    let mut hrrn_scheduler = HRRNScheduler::new(hrrn_process);
+                    hrrn_scheduler.schedule();
+                    hrrn_scheduler.display();
+
+                    let again: bool = try_again()?;
+                    if again {
+                        continue 'hrrn_loop
+                    } else {
+                        break 'hrrn_loop
+                    }
+                }
+            },
             6 => {
                 println!("CPU Scheduling Algorithm Exiting... Bye!");
                 break

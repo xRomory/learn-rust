@@ -85,7 +85,7 @@ impl HRRNSched for HRRNScheduler {
             let mut selected_index = None;
             let mut highest_response_ratio = f32::MIN;
 
-            for i in next_arrival_index..num_processes {
+            for i in 0..num_processes {
                 if self.processes[i].base.arrival_time > current_time {
                     break;
                 }
@@ -141,8 +141,8 @@ impl HRRNSched for HRRNScheduler {
     fn display(&self) {
         Self::display_table(&self.processes);
 
-        println!("Average Turnaround Time: {:.0}ms", self.avg_turnaround_time());
-        println!("Average Waiting Time: {:.0}ms", self.avg_waiting_time());
+        println!("Average Turnaround Time: {:.2} ms", self.avg_turnaround_time());
+        println!("Average Waiting Time: {:.2} ms", self.avg_waiting_time());
 
         self.gantt_chart.display_gantt_chart();
     }
