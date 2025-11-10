@@ -99,3 +99,24 @@ impl PriorityProcess {
         }
     }
 }
+
+#[derive(Debug, Clone)]
+pub struct HRRNProcess {
+    pub base: BaseProcess,
+    pub completion_time: u32,
+    pub response_time: u32,
+    pub turnaround_time: u32,
+    pub waiting_time: u32
+}
+
+impl HRRNProcess {
+    pub fn new(base: BaseProcess) -> Self {
+        HRRNProcess {
+            base,
+            completion_time: 0,
+            response_time: 0,
+            turnaround_time: 0, 
+            waiting_time: 0 
+        }
+    }
+}

@@ -38,10 +38,10 @@ impl PriorityScheduler {
     }
 
     /* 
-        Helper function to add all newly arrived processes to the ready queue
-
-        * Used Revsrse since BinaryHeap uses max heap by default.
-        * In Priority Scheduling, the smaller the value of priority, that's the being prioritize. Hence, min heap
+     *  Helper function to add all newly arrived processes to the ready queue
+     *
+     *  * Used Revsrse since BinaryHeap uses max heap by default.
+     *  * In Priority Scheduling, the smaller the value of priority, that's the being prioritize. Hence, min heap
     */
     fn add_arrived_processes_to_heap(
         &self,

@@ -23,7 +23,7 @@ impl FCFSScheduler {
 
 impl Scheduler for FCFSScheduler {
     fn schedule(&mut self) {
-        self.processes.sort_by_key(|p| p.base.arrival_time);
+        self.processes.sort_by_key(|p: &FCFSProcess| p.base.arrival_time);
 
         let mut current_time = 0;
         let mut total_tat = 0;
