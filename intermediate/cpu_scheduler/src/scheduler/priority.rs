@@ -87,7 +87,7 @@ impl PriorityScheduler {
             );
         }
 
-        println!("\n{}", HEADER);
+        println!("{}\n", HEADER);
     }
 }
 

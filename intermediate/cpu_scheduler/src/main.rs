@@ -3,8 +3,8 @@ mod scheduler;
 mod utils;
 
 use crate:: {
-    models::cpu_process::{BaseProcess, FCFSProcess, RRProcess, SJFProcess},
-    scheduler::{fcfs::{FCFSScheduler, Scheduler}, priority::{PrioritySched, PriorityScheduler}, round_robin::{RRScheduler, RoundRobinScheduler}, sjf::{SJFPreemptiveScheduler, SJFScheduler}},
+    models::cpu_process::{BaseProcess, FCFSProcess, HRRNProcess, RRProcess, SJFProcess},
+    scheduler::{fcfs::{FCFSScheduler, Scheduler}, hrrn::{HRRNSched, HRRNScheduler}, priority::{PrioritySched, PriorityScheduler}, round_robin::{RRScheduler, RoundRobinScheduler}, sjf::{SJFPreemptiveScheduler, SJFScheduler}},
     utils::{
         input::{get_priority_processes_from_user, get_processes_from_user, user_input, valid_input},
         try_again::try_again
@@ -108,7 +108,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>>{
                         break 'priority_loop
                     }
                 }
-            }
+            },
+            
             6 => {
                 println!("CPU Scheduling Algorithm Exiting... Bye!");
                 break
