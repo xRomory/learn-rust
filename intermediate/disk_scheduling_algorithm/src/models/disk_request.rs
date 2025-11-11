@@ -1,12 +1,16 @@
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub struct DiskRequest {
-    pub position: u32,
+    pub request_id: usize,
+    pub track_number: u32,
+    pub arrival_time: u32,
 }
 
 impl DiskRequest {
-    pub fn new(position: u32) -> Self {
+    pub fn new(request_id: usize, track_number: u32) -> Self {
         DiskRequest { 
-            position 
+            request_id,
+            track_number,
+            arrival_time: 0,
         }
     }
 }
