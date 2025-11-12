@@ -42,6 +42,7 @@ impl DiskSimulator {
         result: &SimulationResult
     ) {
         println!("=== Simulation Results ===");
+        println!("Algorithm (from result): {}", result.algorithm_name);
         println!("Total Seek Time: {}", result.total_seek_time);
         println!("Average Seek Time: {:.2}", result.average_seek_time);
         println!("Requests Processed: {}", result.requests_processed);
