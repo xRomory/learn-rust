@@ -1,4 +1,4 @@
-use rand::Rng;
+use rand::{Rng, rngs::ThreadRng};
 use crate::{types::{RequestPattern, DiskConfig, DiskRequest}};
 
 #[derive(Debug)]
@@ -22,7 +22,7 @@ impl RequestPattern for ClusteredPattern {
             return Vec::new();
         }
 
-        let mut rng = rand::rng();
+        let mut rng: ThreadRng = rand::rng();
         let mut requests = Vec::with_capacity(count);
 
         for i in 0..count {
@@ -58,7 +58,7 @@ impl RequestPattern for RandomPattern {
         count: usize,
         config: &DiskConfig
     ) -> Vec<DiskRequest> {
-        let mut rng = rand::rng();
+        let mut rng: ThreadRng = rand::rng();
         (0..count)
             .map(|i| {
                 let track = rng.random_range(0..=config.max_track);
