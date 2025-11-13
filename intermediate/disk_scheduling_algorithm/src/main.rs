@@ -32,11 +32,11 @@ fn main() {
 
     // Different Scenarios for Basic FCFS
     simulator.run_simulation(&clustered_pattern, &basic_fcfs, 12);
-    simulator.run_simulation(&random_pattern, &basic_fcfs, 8);
-    simulator.run_simulation(&sequential_pattern, &basic_fcfs, 10);
-
-    // Different Scenarios for Clustered FCFS
     simulator.run_simulation(&clustered_pattern, &clusterd_fcfs, 12);
+
+    simulator.run_simulation(&random_pattern, &basic_fcfs, 8);
     simulator.run_simulation(&random_pattern, &clusterd_fcfs, 8);
+    
+    simulator.run_simulation(&sequential_pattern, &basic_fcfs, 10);
     simulator.run_simulation(&sequential_pattern, &clusterd_fcfs, 10);
 }

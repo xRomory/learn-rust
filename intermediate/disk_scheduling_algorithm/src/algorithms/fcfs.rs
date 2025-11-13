@@ -41,7 +41,10 @@ impl ClusteredFCFS {
         Self { cluster_threshold }
     }
 
-    fn form_clusters(&self, requests: &[DiskRequest]) -> Vec<Vec<DiskRequest>> {
+    fn form_clusters(
+        &self,
+        requests: &[DiskRequest]
+    ) -> Vec<Vec<DiskRequest>> {
         if requests.is_empty() {
             return Vec::new();
         }
@@ -76,7 +79,11 @@ impl ClusteredFCFS {
 }
 
 impl DiskScheduler for ClusteredFCFS {
-    fn schedule(&self, requests: &[DiskRequest], config: &DiskConfig) -> SimulationResult {
+    fn schedule(
+        &self,
+        requests: &[DiskRequest],
+        config: &DiskConfig
+    ) -> SimulationResult {
         let mut result = SimulationResult::new(self.name());
         let mut current_position = config.initial_position;
 
