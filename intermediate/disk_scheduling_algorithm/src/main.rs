@@ -1,5 +1,9 @@
 use crate::{
-    algorithms::fcfs::{BasicFCFS, ClusteredFCFS}, request_patterns::{ClusteredPattern, RandomPattern, SequentialPattern}, simulator::DiskSimulator, types::DiskConfig
+    algorithms::{
+        fcfs::{BasicFCFS, ClusteredFCFS}, 
+        sstf::SSTF
+    }, 
+    request_patterns::{ClusteredPattern, RandomPattern, SequentialPattern}, simulator::DiskSimulator, types::DiskConfig
 };
 
 mod algorithms;
@@ -28,9 +32,11 @@ fn main() {
     let basic_fcfs = BasicFCFS;
     let clusterd_fcfs = ClusteredFCFS::new(15);
 
+    let sstf = SSTF;
+
     println!("Disk Scheduling Algorithms Simulation\n");
 
-    // Different Scenarios for Basic FCFS
+    // Simulation for FCFS
     simulator.run_simulation(&clustered_pattern, &basic_fcfs, 12);
     simulator.run_simulation(&clustered_pattern, &clusterd_fcfs, 12);
 
@@ -39,4 +45,9 @@ fn main() {
     
     simulator.run_simulation(&sequential_pattern, &basic_fcfs, 10);
     simulator.run_simulation(&sequential_pattern, &clusterd_fcfs, 10);
+
+    // Simulation for SSTF
+    simulator.run_simulation(&clustered_pattern, &sstf, 12);
+    simulator.run_simulation(&random_pattern, &sstf, 8);
+    simulator.run_simulation(&sequential_pattern, &sstf, 10);
 }
