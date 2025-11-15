@@ -35,8 +35,8 @@ fn main() {
     let sstf = SSTF;
     let clusterd_sstf = ClusteredSSTF::new(15);
 
-    // let scan_right = SCAN::new(ScanDirection::RIGHT);
-    // let scan_left = SCAN::new(ScanDirection::LEFT);
+    let scan_right = SCAN::new(ScanDirection::RIGHT);
+    let scan_left = SCAN::new(ScanDirection::LEFT);
 
     println!("Disk Scheduling Algorithms Simulation\n");
 
@@ -59,4 +59,14 @@ fn main() {
     
     simulator.run_simulation(&sequential_pattern, &sstf, 10);
     simulator.run_simulation(&sequential_pattern, &clusterd_sstf, 10);
+
+    // Simulation for SCAN
+    simulator.run_simulation(&clustered_pattern, &scan_right, 12);
+    simulator.run_simulation(&clustered_pattern, &scan_left, 12);
+
+    simulator.run_simulation(&random_pattern, &scan_right, 8);
+    simulator.run_simulation(&random_pattern, &scan_left, 8);
+
+    simulator.run_simulation(&sequential_pattern, &scan_right, 10);
+    simulator.run_simulation(&sequential_pattern, &scan_left, 10);
 }
