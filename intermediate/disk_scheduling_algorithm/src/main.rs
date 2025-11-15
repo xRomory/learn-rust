@@ -1,7 +1,6 @@
 use crate::{
     algorithms::{
-        fcfs::{BasicFCFS, ClusteredFCFS}, 
-        sstf::{ClusteredSSTF, SSTF}
+        fcfs::{BasicFCFS, ClusteredFCFS}, scan::{ScanDirection, SCAN}, sstf::{ClusteredSSTF, SSTF}
     }, 
     request_patterns::{ClusteredPattern, RandomPattern, SequentialPattern}, 
     simulator::DiskSimulator, types::DiskConfig
@@ -35,6 +34,9 @@ fn main() {
 
     let sstf = SSTF;
     let clusterd_sstf = ClusteredSSTF::new(15);
+
+    // let scan_right = SCAN::new(ScanDirection::RIGHT);
+    // let scan_left = SCAN::new(ScanDirection::LEFT);
 
     println!("Disk Scheduling Algorithms Simulation\n");
 
