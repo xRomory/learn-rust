@@ -1,6 +1,6 @@
 use crate::{
     algorithms::{
-        fcfs::{BasicFCFS, ClusteredFCFS}, scan::{ScanDirection, SCAN}, sstf::{ClusteredSSTF, SSTF}
+        cscan::{CSCAN, CScanDirection}, fcfs::{BasicFCFS, ClusteredFCFS}, scan::{SCAN, ScanDirection}, sstf::{ClusteredSSTF, SSTF}
     }, 
     request_patterns::{ClusteredPattern, RandomPattern, SequentialPattern}, 
     simulator::DiskSimulator, types::DiskConfig
@@ -38,6 +38,9 @@ fn main() {
     let scan_right = SCAN::new(ScanDirection::RIGHT);
     let scan_left = SCAN::new(ScanDirection::LEFT);
 
+    let cscan_right = CSCAN::new(CScanDirection::RIGHT);
+    let cscan_left = CSCAN::new(CScanDirection::LEFT);
+
     println!("Disk Scheduling Algorithms Simulation\n");
 
     // Simulation for FCFS
@@ -69,4 +72,14 @@ fn main() {
 
     simulator.run_simulation(&sequential_pattern, &scan_right, 10);
     simulator.run_simulation(&sequential_pattern, &scan_left, 10);
+
+    // Simulation for CSCAN
+    simulator.run_simulation(&clustered_pattern, &cscan_right, 12);
+    simulator.run_simulation(&clustered_pattern, &cscan_left, 12);
+
+    simulator.run_simulation(&random_pattern, &cscan_right, 8);
+    simulator.run_simulation(&random_pattern, &cscan_left, 8);
+
+    simulator.run_simulation(&sequential_pattern, &cscan_right, 10);
+    simulator.run_simulation(&sequential_pattern, &cscan_left, 10);
 }
