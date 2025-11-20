@@ -85,3 +85,27 @@ impl BankerAlgorithm {
         (0..self.state.resources).all(|j| self.state.need[process][j] <= work[j])
     }
 }
+
+impl DeadlockDetector for BankerAlgorithm {
+    fn detect_deadlock(&self) -> Option<Vec<usize>> {
+        match self.get_safe_sequence() {
+            Some(_) => None,
+            None => {
+                let mut deadlocked = Vec::new();
+                let safe_seq = self.get_safe_sequence().unwrap_or_default();
+
+                for i in 0..self.state.processes {
+                    if !safe_seq.contains(&i) {
+                        deadlocked.push(i);
+                    }
+                }
+
+                Some(deadlocked)
+            }
+        }
+    }
+
+    fn is_safe_state(&self) -> bool {
+        self.get_safe_sequence().is_some()
+    }
+}
