@@ -1,4 +1,4 @@
-use crate::models::SystemState;
+use crate::{detection::DeadlockDetector, models::SystemState};
 
 #[derive(Debug, Clone)]
 pub struct BankerAlgorithm {
@@ -45,5 +45,43 @@ impl BankerAlgorithm {
         } else {
             Err("Request would lead to unsafe state".to_string())
         }
+    }
+
+    pub fn get_safe_sequence(&self) -> Option<Vec<usize>> {
+        let mut work = self.state.available.clone();
+        let mut finish = vec![false; self.state.processes];
+        let mut safe_sequence = Vec::new();
+
+        for _ in 0..self.state.processes {
+            let mut found = false;
+
+            for i in 0..self.state.processes {
+                if !finish[i] && self.can_allocate(i, &work) {
+                    for j in 0..self.state.processes {
+                        work[j] += self.state.allocation[i][j];
+                    }
+
+                    finish[i] = true;
+                    safe_sequence.push(i);
+                    found = true;
+                }
+            }
+
+            if !found { break; }
+        }
+
+        if safe_sequence.len() == self.state.processes {
+            Some(safe_sequence)
+        } else {
+            None
+        }
+    }
+
+    fn can_allocate(
+        &self,
+        process: usize,
+        work: &[usize],
+    ) -> bool {
+        (0..self.state.resources).all(|j| self.state.need[process][j] <= work[j])
     }
 }
