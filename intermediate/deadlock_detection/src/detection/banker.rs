@@ -1,4 +1,5 @@
-use crate::{detection::DeadlockDetector, models::SystemState};
+use crate::models::SystemState;
+use super::DeadlockDetector;
 
 #[derive(Debug, Clone)]
 pub struct BankerAlgorithm {

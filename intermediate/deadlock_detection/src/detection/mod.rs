@@ -1,4 +1,5 @@
 pub mod banker;
+pub mod rag;
 
 pub use banker::BankerAlgorithm;
 
