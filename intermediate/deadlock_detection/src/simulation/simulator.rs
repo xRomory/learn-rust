@@ -1,9 +1,7 @@
-use rand::Rng;
+use rand::{Rng, rngs::ThreadRng};
 
 use crate::{
-    models::SystemState,
-    detection::{BankerAlgorithm},
-    prevention::{DeadlockAvoidance, PreemptiveAllocator, DeadlockPreventor},
+    detection::{BankerAlgorithm, DeadlockDetector}, models::SystemState, prevention::{DeadlockAvoidance, DeadlockPreventor, PreemptiveAllocator}
 };
 
 #[derive(Debug)]
@@ -23,6 +21,65 @@ impl DeadlockSimulator {
         Self {
             state,
             max_requests: 10
+        }
+    }
+
+    pub fn run_banker_simulation(&self) {
+        println!("\n=== Banker's Algorithm Simulation ===");
+
+        let mut banker = BankerAlgorithm::new(self.state.clone());
+
+        println!("Initial State:");
+        self.print_state(&banker.state);
+
+        println!("Initial safe sequence: {:?}", banker.get_safe_sequence());
+
+        // Simulate some requests
+        let mut rng: ThreadRng = rand::rng();
+
+        for _ in 0..self.max_requests {
+            let process_id = rng.random_range(0..self.state.processes);
+            let request: Vec<usize> = (0..self.state.resources)
+                .map(|_| rng.random_range(0..2))
+                .collect();
+
+            println!("\nProcess {} requests: {:?}", process_id, request);
+
+            match banker.request_resource(process_id, request.clone()) {
+                Ok(()) => {
+                    println!("Request granted");
+                    println!("New safe sequence: {:?}", banker.get_safe_sequence());
+                }
+                Err(e) => {
+                    println!("Request denied: {}", e);
+                }
+            }
+        }
+
+        // Check for deadlock
+        if let Some(deadlocked) = banker.detect_deadlock() {
+            println!("\nDeadlock detected! Deadlocked processes: {:?}", deadlocked);
+        } else {
+            println!("\nNo deadlock detected");
+        }
+    }
+
+    fn print_state(&self, state: &SystemState) {
+        println!("Available: {:?}", state.available);
+
+        println!("Allocation matrix:");
+        for (i, alloc) in state.allocation.iter().enumerate() {
+            println!("  P{}: {:?}", i, alloc);
+        }
+
+        println!("Max matrix:");
+        for (i, max) in state.max.iter().enumerate() {
+            println!("  P{}: {:?}", i, max);
+        }
+
+        println!("Need matrix:");
+        for (i, need) in state.need.iter().enumerate() {
+            println!("  P{}: {:?}", i, need);
         }
     }
 }

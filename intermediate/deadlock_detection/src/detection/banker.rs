@@ -3,7 +3,7 @@ use super::DeadlockDetector;
 
 #[derive(Debug, Clone)]
 pub struct BankerAlgorithm {
-    state: SystemState,
+    pub state: SystemState,
 }
 
 impl BankerAlgorithm {
