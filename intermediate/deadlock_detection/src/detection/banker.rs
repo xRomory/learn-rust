@@ -58,7 +58,7 @@ impl BankerAlgorithm {
 
             for i in 0..self.state.processes {
                 if !finish[i] && self.can_allocate(i, &work) {
-                    for j in 0..self.state.processes {
+                    for j in 0..self.state.resources {
                         work[j] += self.state.allocation[i][j];
                     }
 
