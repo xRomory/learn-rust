@@ -35,6 +35,13 @@ impl BankerAlgorithm {
         let mut temp_state = self.state.clone();
 
         for j in 0..self.state.resources {
+            if request[j] > self.state.available[j] {
+                return Err(format!(
+                    "Not enough resource {} available (requested {}, available {})",
+                    j, request[j], self.state.available[j]
+                ));
+            }
+
             temp_state.available[j] -= request[j];  // Remove from available
             temp_state.allocation[process_id][j] += request[j]; // Add to allocation
             temp_state.need[process_id][j] -= request[j];   // Reduce need
