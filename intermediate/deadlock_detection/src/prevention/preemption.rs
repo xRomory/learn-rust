@@ -2,7 +2,7 @@ use crate::{models::SystemState, prevention::DeadlockPreventor};
 
 #[derive(Debug, Clone)]
 pub struct PreemptiveAllocator {
-    state: SystemState
+    pub state: SystemState
 }
 
 impl PreemptiveAllocator {
@@ -76,7 +76,7 @@ impl DeadlockPreventor for PreemptiveAllocator {
             self.preempt_resources(victim);
 
             // Try allocation again
-            for j in 0..self.state.processes {
+            for j in 0..self.state.resources {
                 if request[j] > self.state.available[j] {
                     return Err("Cannot allocate even with preemption".to_string());
                 }
