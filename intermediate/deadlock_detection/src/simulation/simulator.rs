@@ -1,7 +1,7 @@
 use rand::{Rng, rngs::ThreadRng};
 
 use crate::{
-    detection::{BankerAlgorithm, DeadlockDetector}, models::SystemState, prevention::{DeadlockAvoidance, DeadlockPreventor, PreemptiveAllocator}
+    detection::{BankerAlgorithm, DeadlockDetector}, models::SystemState, prevention::{DeadlockAvoidance, DeadlockPreventor, PreemptiveAllocator}, rag::ResourceAllocationGraph
 };
 
 #[derive(Debug)]
@@ -106,7 +106,14 @@ impl DeadlockSimulator {
         for i in 0..self.max_requests {
             let process_id = rng.random_range(0..self.state.processes);
             let request: Vec<usize> = (0..self.state.resources)
-                .map(|_| rng.random_range(0..3))    // Larger requests to trigger preemption
+                .map(|j| {
+                    let max_request = preempt.state.need[process_id][j];
+                    if max_request > 0 {
+                        rng.random_range(0..=max_request.min(3))
+                    } else {
+                        0
+                    }
+                })    // Larger requests to trigger preemption
                 .collect();
 
             println!("\nRequest {}: Process {} requests{:?}", i, process_id, request);
@@ -115,6 +122,41 @@ impl DeadlockSimulator {
                 Ok(()) => println!("Allocation successful"),
                 Err(e) => println!("Allocation failed: {}", e),
             }
+        }
+    }
+
+    pub fn run_resource_graph_simulation(&self) {
+        println!("\n=== Resource Allocation Graph Simulation ===");
+
+        let mut graph = ResourceAllocationGraph::new();
+
+        // Add processes and resources
+        for i in 0..self.state.processes {
+            graph.add_process(i);
+        }
+
+        for j in 0..self.state.resources {
+            graph.add_resource(j);
+        }
+
+        for t in 0..self.state.processes {
+            for l in 0..self.state.resources {
+                if self.state.allocation[t][l] > 0 {
+                    graph.add_allocation(l, t);
+                }
+
+                if self.state.need[t][l] > 0 {
+                    graph.add_request(t, l);
+                }
+            }
+        }
+
+        println!("Graph has cycle: {}", graph.has_cycle());
+
+        if let Some(deadlocked) = graph.detect_deadlock() {
+            println!("Deadlock detected in graph! Processes: {:?}", deadlocked);
+        } else {
+            println!("No deadlock detected in Graph");
         }
     }
 
