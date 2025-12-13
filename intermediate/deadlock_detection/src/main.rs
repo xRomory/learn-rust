@@ -25,6 +25,7 @@ fn main() {
     let simulator = DeadlockSimulator::new(available, max, allocation);
 
     simulator.run_banker_simulation();
+    simulator.run_avoidance_simulation();
 
     println!("\n=== Simulation Complete ===");
 }

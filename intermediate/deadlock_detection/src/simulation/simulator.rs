@@ -64,6 +64,35 @@ impl DeadlockSimulator {
         }
     }
 
+    pub fn run_avoidance_simulation(&self) {
+        println!("\n=== Deadlock Avoidance Simulation ===");
+
+        let mut avoidance = DeadlockAvoidance::new(self.state.clone());
+
+        println!("Initial State:");
+        self.print_state(&avoidance.get_state());
+
+        let mut rng: ThreadRng = rand::rng();
+
+        for i in 0..self.max_requests {
+            let process_id = rng.random_range(0..self.state.processes);
+            let request: Vec<usize> = (0..self.state.resources)
+                .map(|_| rng.random_range(0..2))
+                .collect();
+
+            println!("\nRequest {}: Process {} requests{:?}", i, process_id, request);
+
+            if avoidance.can_allocate(process_id, &request) {
+                match avoidance.allocate(process_id, request) {
+                    Ok(()) => println!("Allocation successful"),
+                    Err(e) => println!("Allocation failed: {}", e),
+                }
+            } else {
+                println!("Allocation would lead to unsafe state - request denied");
+            }
+        }
+    }
+
     fn print_state(&self, state: &SystemState) {
         println!("Available: {:?}", state.available);
 
