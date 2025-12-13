@@ -26,6 +26,7 @@ fn main() {
 
     simulator.run_banker_simulation();
     simulator.run_avoidance_simulation();
+    simulator.run_preemption_simulation();
 
     println!("\n=== Simulation Complete ===");
 }

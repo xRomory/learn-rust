@@ -93,6 +93,31 @@ impl DeadlockSimulator {
         }
     }
 
+    pub fn run_preemption_simulation(&self) {
+        println!("\n=== Preemptive Allocation Simulation ===");
+
+        let mut preempt = PreemptiveAllocator::new(self.state.clone());
+
+        println!("Initial State:");
+        self.print_state(&preempt.state);
+
+        let mut rng: ThreadRng = rand::rng();
+
+        for i in 0..self.max_requests {
+            let process_id = rng.random_range(0..self.state.processes);
+            let request: Vec<usize> = (0..self.state.resources)
+                .map(|_| rng.random_range(0..3))    // Larger requests to trigger preemption
+                .collect();
+
+            println!("\nRequest {}: Process {} requests{:?}", i, process_id, request);
+
+            match preempt.allocate(process_id, request) {
+                Ok(()) => println!("Allocation successful"),
+                Err(e) => println!("Allocation failed: {}", e),
+            }
+        }
+    }
+
     fn print_state(&self, state: &SystemState) {
         println!("Available: {:?}", state.available);
 

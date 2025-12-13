@@ -2,7 +2,7 @@ use crate::{models::SystemState, prevention::DeadlockPreventor};
 
 #[derive(Debug, Clone)]
 pub struct PreemptiveAllocator {
-    state: SystemState
+    pub state: SystemState
 }
 
 impl PreemptiveAllocator {
