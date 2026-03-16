@@ -1,5 +1,7 @@
 # Multiple Queue Scheduling
 
+## Multi-level Queue (MLQ) Scheduling
+
 In **Multi-level Queue Scheduling**, the operating system (OS)
 separates jobs into different queues based on job type or priority.
 
@@ -11,7 +13,7 @@ So scheduling happens in two levels:
 1. Between queues (which queue gets the CPU)
 2. Inside a queue (which job in that queue runs)
 
-## 1. Jobs Are Classified Into Queues
+### 1. Jobs Are Classified Into Queues
 When a job enters the system, it is assigned to a specific queue.
 
 This assignment is **not random**. It is determined by by predefined rules.
@@ -50,7 +52,7 @@ Example:
 
 So the priority is determined by the queue the job is placed in.
 
-## 2. Each Queue Uses Its Own Algorithm
+### 2. Each Queue Uses Its Own Algorithm
 Each queue can use **different scheduling algorithms**.
 
 Example configuration:
@@ -63,11 +65,6 @@ Example configuration:
 
 So if a job is in Queue 3, it will **always follow FCFS**.
 
-This answers the question:
-> is it not definite what algorithm will be implemented to each job?
-
-**It is definite**
-
 A job inherits the algorithm of the queue it belongs to.
 
 Example:
@@ -77,7 +74,7 @@ J2 → Q3 → FCFS
 J3 → Q0 → Round Robin
 ```
 
-## 3. CPU Chooses Which Queue Runs
+### 3. CPU Chooses Which Queue Runs
 The scheduler always checks **queues by priority order**.
 
 Example:
@@ -100,3 +97,32 @@ If empty → check Q3
 ```
 
 The CPU never runs a lower queue if higher queue has jobs.
+
+### 4. Why Multiple Queue Scheduling
+This system allows the OS to prioritize different workloads:
+
+| Job Type    | Desired Behavior    |
+| ----------- | ------------------- |
+| Interactive | fast response       |
+| System      | immediate execution |
+| Batch       | efficiency          |
+| Background  | lowest priority     |
+
+Example:
+```
+Mouse click event → high priority queue
+Video rendering → background queue
+```
+
+Without the system, a large batch job could freeze interactive programs.
+
+## Multi-level Feedback Queue (MLFQ) Scheduling
+MLFQ improves MLQ by allowing jobs to move between queues, which makes the system adaptive.
+
+### Characteristics of MLFQ
+
+Queues still exists, but jobs can change priority depending on their behavior.
+
+- Processes can move between queues based on their CPU usage or I/O behavior.
+- Processes are **not** permanently assigned to any queue.
+- Priority changes dynamically depending on process performance.

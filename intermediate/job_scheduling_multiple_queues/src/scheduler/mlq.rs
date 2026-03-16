@@ -1,6 +1,7 @@
 use crate::{
   queues::queue::JobQueue,
-  scheduler::scheduler::Scheduler
+  scheduler::scheduler::Scheduler,
+  models::job::Job
 };
 
 pub struct MLQScheduler {
@@ -8,7 +9,7 @@ pub struct MLQScheduler {
 }
 
 impl Scheduler for MLQScheduler {
-  fn add_job(&mut self, job: crate::job::Job) {
+  fn add_job(&mut self, job: Job) {
     let level = job.priority as usize;
     self.queues[level].enqueue(job);
   }
