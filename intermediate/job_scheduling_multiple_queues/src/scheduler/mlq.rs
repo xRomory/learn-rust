@@ -17,7 +17,7 @@ impl Scheduler for MLQScheduler {
   fn schedule(
     &mut self,
     _current_time: u32
-  ) -> Option<crate::job::Job> {
+  ) -> Option<Job> {
     for queue in &mut self.queues {
       if !queue.job_is_empty() {
         return queue.dequeue();
