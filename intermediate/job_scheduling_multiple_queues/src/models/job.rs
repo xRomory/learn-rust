@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Job  {
   pub id: u32,
   pub arrival_time: u32,
