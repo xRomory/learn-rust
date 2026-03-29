@@ -34,7 +34,7 @@ impl Scheduler for HRRNScheduler {
       let waiting_time = current_time - job.arrival_time;
 
       let response_ratio = 
-        (waiting_time as f64 - job.burst_time as f64) / job.burst_time as f64;
+        (waiting_time as f64 + job.burst_time as f64) / job.burst_time as f64;
       
       if response_ratio > highest_rr {
         highest_rr = response_ratio;
