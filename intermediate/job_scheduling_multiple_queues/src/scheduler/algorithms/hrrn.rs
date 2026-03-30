@@ -11,6 +11,16 @@ impl HRRNScheduler {
   pub fn new() -> Self {
     HRRNScheduler { jobs: Vec::new() }
   }
+
+  pub fn calculate_response_ratio(job: &Job, current_time: u32) -> f64 {
+    let waiting_time: u32 = if current_time > job.arrival_time {
+      current_time.saturating_sub(job.arrival_time)
+    } else {
+      0
+    };
+
+    (waiting_time as f64 + job.burst_time as f64) / job.burst_time as f64
+  }
 }
 
 impl Scheduler for HRRNScheduler {
@@ -31,11 +41,8 @@ impl Scheduler for HRRNScheduler {
         continue;
       }
 
-      let waiting_time = current_time - job.arrival_time;
-
-      let response_ratio = 
-        (waiting_time as f64 + job.burst_time as f64) / job.burst_time as f64;
-      
+      let response_ratio = Self::calculate_response_ratio(job, current_time);
+    
       if response_ratio > highest_rr {
         highest_rr = response_ratio;
         idx = Some(i);
