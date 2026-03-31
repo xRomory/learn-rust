@@ -1,24 +1,18 @@
 #[cfg(test)]
 mod tests {
   use crate::{
-    models::job::Job,
-    scheduler::algorithms::round_robin::RoundRobinScheduler,
-    scheduler::scheduler::Scheduler,
+    scheduler::{
+      algorithms::round_robin::RoundRobinScheduler,
+      scheduler::Scheduler
+    },
+    tests::helper::create_job::create_job,
   };
 
   #[test]
   fn test_round_robin() {
     let mut scheduler: RoundRobinScheduler = RoundRobinScheduler::new(2);
-    
-    scheduler.add_job(Job{
-      id: 1,
-      burst_time: 5,
-      remaining_time: 5,
-      arrival_time: 0,
-      priority: 0,
-      start_time: None,
-      completion_time: None
-    });
+
+    scheduler.add_job(create_job(1, 0, 5));
 
     let result = scheduler.schedule(3);
 

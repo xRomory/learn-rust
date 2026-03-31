@@ -1,11 +1,11 @@
 #[cfg(test)]
 mod tests {
-  use crate::{
-    models::job::Job, 
+  use crate::{ 
     scheduler::{
       algorithms::hrrn::HRRNScheduler, 
       scheduler::Scheduler
-    }
+    },
+    tests::helper::create_job::create_job
   };
 
   #[test]
@@ -74,23 +74,5 @@ mod tests {
 
     let result = scheduler.schedule(0);
     assert!(result.is_none(), "Should return None if no jobs have arrived yet");
-  }
-
-  // Helper function to create job
-  fn create_job(
-    id: u32,
-    arrival_time: u32,
-    burst_time: u32,
-
-  ) -> Job {
-    Job {
-      id,
-      arrival_time,
-      burst_time,
-      remaining_time: burst_time, 
-      priority: 0,
-      start_time: None,
-      completion_time: None
-    }
   }
 }
