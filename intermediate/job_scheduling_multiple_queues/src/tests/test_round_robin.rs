@@ -16,7 +16,7 @@ mod tests {
 
     let result = scheduler.schedule(3);
 
-    println!("Result: {:?}", result);
+    // println!("Result: {:?}", result);
 
     assert!(result.is_some());
     assert_eq!(result.unwrap().remaining_time, 3);

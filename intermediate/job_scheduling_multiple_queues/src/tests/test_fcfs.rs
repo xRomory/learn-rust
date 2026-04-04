@@ -19,7 +19,7 @@ mod tests {
     let job = 
       scheduler.schedule(2).expect("Should schedule a job");
 
-    println!("Job ID should be 2: {:?}", job);
+    // println!("Job ID should be 2: {:?}", job);
     assert_eq!(job.id, 2);
   }
 
@@ -30,7 +30,7 @@ mod tests {
     
     let result = scheduler.schedule(0);
 
-    println!("Result should be None: {:?}", result);
+    // println!("Result should be None: {:?}", result);
     assert!(result.is_none());
   }
 
@@ -43,8 +43,8 @@ mod tests {
     let job =
       scheduler.schedule(9).unwrap();
     
-    println!("Start time should be 9: {:?}", job.start_time);
-    println!("Completion time should be 24: {:?}", job.completion_time);
+    // println!("Start time should be 9: {:?}", job.start_time);
+    // println!("Completion time should be 24: {:?}", job.completion_time);
     assert_eq!(job.start_time, Some(9));
     assert_eq!(job.completion_time, Some(24));
   }

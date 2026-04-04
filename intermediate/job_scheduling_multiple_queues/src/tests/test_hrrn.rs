@@ -15,7 +15,7 @@ mod tests {
     let response_ratio =  HRRNScheduler::calculate_response_ratio(&job, 5);
 
     // Should get 2.0 since (5 + 5) / 5 = 2.0
-    println!("Response Ratio: {:?}", response_ratio);
+    // println!("Response Ratio: {:?}", response_ratio);
     assert_eq!(response_ratio, 2.0);
   }
 
