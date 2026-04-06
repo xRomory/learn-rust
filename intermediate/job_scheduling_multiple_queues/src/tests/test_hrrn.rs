@@ -5,12 +5,13 @@ mod tests {
       algorithms::hrrn::HRRNScheduler, 
       scheduler::Scheduler
     },
+    models::job::JobType,
     tests::helper::create_job::create_job
   };
 
   #[test]
   fn test_response_ratio_formula() {
-    let job = create_job(1, 0, 5);
+    let job = create_job(1, 0, 5, JobType::Background);
 
     let response_ratio =  HRRNScheduler::calculate_response_ratio(&job, 5);
 
@@ -24,9 +25,9 @@ mod tests {
     let mut scheduler = HRRNScheduler::new();
 
     let jobs = vec![
-      create_job(1, 0, 5),
-      create_job(2, 1, 3),
-      create_job(3, 2, 2),
+      create_job(1, 0, 5, JobType::Background),
+      create_job(2, 1, 3, JobType::Background),
+      create_job(3, 2, 2, JobType::Background),
     ];
 
     let current_time = 4;
@@ -70,7 +71,7 @@ mod tests {
   fn test_hrrn_no_arrived_jobs() {
     let mut scheduler = HRRNScheduler::new();
 
-    scheduler.add_job(create_job(1, 10, 2));
+    scheduler.add_job(create_job(1, 10, 2, JobType::Background));
 
     let result = scheduler.schedule(0);
     assert!(result.is_none(), "Should return None if no jobs have arrived yet");

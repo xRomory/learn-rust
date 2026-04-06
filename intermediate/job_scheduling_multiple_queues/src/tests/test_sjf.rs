@@ -4,7 +4,8 @@ mod tests {
     scheduler::{
       algorithms::sjf::SJFScheduler, 
       scheduler::Scheduler
-    }, 
+    },
+    models::job::JobType,
     tests::helper::create_job::create_job
   };
 
@@ -12,9 +13,9 @@ mod tests {
   fn test_sjf_basic() {
     let mut scheduler = SJFScheduler::new();
 
-    scheduler.add_job(create_job(1, 0, 5));
-    scheduler.add_job(create_job(2, 2, 1));
-    scheduler.add_job(create_job(3, 3, 4));
+    scheduler.add_job(create_job(1, 0, 5, JobType::Foreground));
+    scheduler.add_job(create_job(2, 2, 1, JobType::Background));
+    scheduler.add_job(create_job(3, 3, 4, JobType::Foreground));
 
     let job = scheduler.schedule(3).unwrap();
     // let job2 = scheduler.schedule(3).unwrap();
@@ -31,7 +32,7 @@ mod tests {
   fn sjf_no_arrived_jobs() {
     let mut scheduler = SJFScheduler::new();
 
-    scheduler.add_job(create_job(1, 5, 2));
+    scheduler.add_job(create_job(1, 5, 2, JobType::Foreground));
 
     let result = scheduler.schedule(0);
     // println!("Result: {:?}", result);
@@ -42,8 +43,8 @@ mod tests {
   fn test_sjf_arrival_filtering() {
     let mut scheduler = SJFScheduler::new();
 
-    scheduler.add_job(create_job(1, 5, 1));
-    scheduler.add_job(create_job(2, 0, 3));
+    scheduler.add_job(create_job(1, 5, 1, JobType::Background));
+    scheduler.add_job(create_job(2, 0, 3, JobType::Foreground));
 
     let job = scheduler.schedule(6).unwrap();
     // println!("Job Filtered: {:?}", job);
@@ -56,7 +57,7 @@ mod tests {
   fn test_sjf_completion_time() {
     let mut scheduler = SJFScheduler::new();
 
-    scheduler.add_job(create_job(1, 5, 1));
+    scheduler.add_job(create_job(1, 5, 1, JobType::Foreground));
 
     let job = scheduler.schedule(5).unwrap();
     // println!("Job Completion Time: {:?}", job.completion_time);

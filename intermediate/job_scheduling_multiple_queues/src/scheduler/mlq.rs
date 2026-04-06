@@ -18,11 +18,15 @@ impl Scheduler for MLQScheduler {
     &mut self,
     current_time: u32
   ) -> Option<Job> {
+    
+
     for queue in &mut self.queues {
-      if !queue.job_is_empty() {
-        if let Some(job) = queue.schedule(current_time) {
-          return Some(job)
-        }
+      if queue.job_is_empty() {
+        continue;
+      }
+      
+      if let Some(job) = queue.schedule(current_time) {
+        return Some(job)
       }
     }
 
