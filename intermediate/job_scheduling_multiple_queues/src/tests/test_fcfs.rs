@@ -4,7 +4,8 @@ mod tests {
     scheduler::{
       algorithms::fcfs::FCFSScheduler,
       scheduler::Scheduler
-    }, 
+    },
+    models::job::JobType,
     tests::helper::create_job::create_job
   };
 
@@ -12,9 +13,9 @@ mod tests {
   fn test_fcfs_basic(){
     let mut scheduler = FCFSScheduler::new();
 
-    scheduler.add_job(create_job(1, 2, 4));
-    scheduler.add_job(create_job(2, 0, 2));
-    scheduler.add_job(create_job(3, 1, 5));
+    scheduler.add_job(create_job(1, 2, 4, JobType::Background));
+    scheduler.add_job(create_job(2, 0, 2, JobType::Background));
+    scheduler.add_job(create_job(3, 1, 5, JobType::Background));
 
     let job = 
       scheduler.schedule(2).expect("Should schedule a job");
@@ -26,7 +27,7 @@ mod tests {
   #[test]
   fn test_no_arrived_jobs() {
     let mut scheduler = FCFSScheduler::new();
-    scheduler.add_job(create_job(1, 2, 4));
+    scheduler.add_job(create_job(1, 2, 4, JobType::Background));
     
     let result = scheduler.schedule(0);
 
@@ -38,7 +39,7 @@ mod tests {
   fn test_fcfs_completion_time() {
     let mut scheduler = FCFSScheduler::new();
 
-    scheduler.add_job(create_job(1, 9, 15));
+    scheduler.add_job(create_job(1, 9, 15, JobType::Background));
 
     let job =
       scheduler.schedule(9).unwrap();
