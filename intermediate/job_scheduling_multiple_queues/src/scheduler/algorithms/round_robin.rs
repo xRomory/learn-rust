@@ -28,19 +28,25 @@ impl Scheduler for RoundRobinScheduler {
     &mut self,
     current_time: u32
   ) -> Option<Job> {
-    if let Some(mut job) = self.queue.pop_front() {
-      let run_time = job.remaining_time.min(self.time_quantum);
-      job.remaining_time -= run_time;
+    let mut idx: usize = 0;
+    while idx < self.queue.len() {
+      if self.queue[idx].arrival_time <= current_time {
+        let mut job = self.queue.remove(idx).unwrap();
+        let run_time = job.remaining_time.min(self.time_quantum);
+        job.remaining_time -= run_time;
 
-      if job.remaining_time > 0 {
-        self.queue.push_back(job);
+        if job.remaining_time > 0 {
+          self.queue.push_back(job);
+        } else {
+          job.completion_time = Some(current_time + run_time);
+        }
+
+        return Some(job)
       } else {
-        job.completion_time = Some(current_time + run_time);
+        idx += 1;
       }
-
-      Some(job)
-    } else {
-      None
     }
+
+    None
   }
 }
