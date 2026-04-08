@@ -1,4 +1,14 @@
-use crate::models::job::{Job, JobType};
+use crate::{
+  models::job::{Job, JobType},
+  queues::queue::{JobQueue, QueueScheduler},
+  scheduler::{
+    mlq::MLQScheduler,
+    algorithms::{
+      fcfs::FCFSScheduler,
+      round_robin::RoundRobinScheduler,
+    }
+  }
+};
 
 pub fn create_job(
   id: u32,
@@ -34,5 +44,20 @@ pub fn create_job_mlq(
     job_type,
     start_time: None,
     completion_time: None
+  }
+}
+
+pub fn create_mlq() -> MLQScheduler {
+  MLQScheduler {
+    queues: vec![
+      JobQueue {
+        level: 0,
+        scheduler: QueueScheduler::RoundRobin(RoundRobinScheduler::new(2))
+      },
+      JobQueue {
+        level: 1,
+        scheduler: QueueScheduler::FCFS(FCFSScheduler::new())
+      }
+    ],
   }
 }
